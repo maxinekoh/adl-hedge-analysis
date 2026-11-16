@@ -1,37 +1,31 @@
 # ADL Hedge Analysis
 
-**What happens to a spot–perpetual hedge when auto-deleveraging closes part of the short?** This notebook measures the exposure left behind and how it affects profit and loss (P&L) if the price moves again.
+**How much of a BTC hedge do you need to put back after auto-deleveraging?** The worked example in *The Price of Solvency* compares leaving a disrupted hedge alone with restoring it in full. This notebook looks at what happens in between.
 
-![Line chart showing incremental P&L for a fully hedged portfolio and portfolios whose short hedge was reduced by 25%, 50%, or 100%. A larger reduction means greater sensitivity to subsequent Bitcoin price moves.](figures/hedge-sensitivity.png)
+Take a portfolio with 1 BTC of spot and an equal perpetual short. At $90,000, auto-deleveraging (ADL) closes half the short, leaving 0.5 BTC net long. Say you want to keep the loss from a further 5% drop within a $1,000 limit, including the cost of putting the hedge back. At an assumed execution cost of 50 basis points, you’d need to replace about **0.309 BTC** of the short, or **62% of the amount ADL closed**.
 
-## Worked example
+| Short put back | Loss from the 5% drop | Execution cost | Combined loss |
+| --- | ---: | ---: | ---: |
+| 0 BTC | $2,250.00 | $0.00 | $2,250.00 |
+| 0.25 BTC | $1,125.00 | $112.50 | $1,237.50 |
+| ≈0.309 BTC | $861.11 | $138.89 | $1,000.00 |
+| 0.50 BTC | $0.00 | $225.00 | $225.00 |
 
-Start with **1 BTC of spot** and an equal short in a linear BTC perpetual. At the point of auto-deleveraging (ADL), BTC is priced at **$90,000**. If ADL closes **50%** of the short while the spot position stays open:
+The table uses the unrounded hedge size. If you budgeted only for the price move, you’d replace about 0.278 BTC and still end up about $125 over the cap. In the notebook, you can change the size of the assumed drop or the cost of trading and see how the answer moves.
 
-| Metric | Result |
-| --- | ---: |
-| Remaining short | 0.50 BTC |
-| Net long exposure | 0.50 BTC |
-| Value of net exposure at the ADL price | $45,000 |
-| Additional P&L if BTC falls another 5% | −$2,250 |
-| Illustrative cost to restore the hedge at 50 basis points | $225 |
+![Chart showing how larger short closures make the still-open spot position more sensitive to the next price move, before any new short is added.](figures/hedge-sensitivity.png)
 
-The 50 basis points are applied once to the missing short’s $45,000 notional at the ADL price. The table treats continued exposure and immediate re-hedging as separate scenarios.
+## Run the notebook
 
-## Explore or run
-
-- [Open the notebook](adl_hedge_analysis.ipynb) to see the formulas, four scenarios, and chart.
-- To rerun it locally, install the requirements and start Jupyter from the repository folder.
+[Open the notebook](adl_hedge_analysis.ipynb) on GitHub to see the calculations. To change the inputs, open a terminal in the repository folder and run:
 
 ```sh
 python -m pip install -r requirements.txt
 python -m notebook adl_hedge_analysis.ipynb
 ```
 
-Change the starting inputs in the notebook, then run all cells. It regenerates the chart at `figures/hedge-sensitivity.png`.
+Change the inputs in the first code cell and run all cells.
 
-## Scope
+## Where the numbers come from
 
-The model uses illustrative inputs and assumes equal initial long and short quantities, a linear perpetual, and matching spot and perpetual price moves. Incremental P&L starts at the ADL price. Funding, basis, execution timing, ADL settlement prices, and venue-specific rules are outside the model. The $225 re-hedging cost uses an assumed rate. The results do not estimate historical losses.
-
-This analysis extends the worked example in Maxine Koh Xin Yi’s *The Price of Solvency: When the Exchange Survives, but the Hedge Doesn't* (Blockchain @ NTU, October 2026).
+The starting position comes from Maxine Koh Xin Yi’s *The Price of Solvency: When the Exchange Survives, but the Hedge Doesn't* (Blockchain @ NTU, October 2026). The $1,000 limit and the price shocks are hypothetical. The model assumes the new short fills immediately at the ADL price, with one execution charge proportional to size. It treats spot and perpetual price moves as equal and leaves out funding, basis, and ADL settlement effects. The calculation starts after ADL and covers the next price move.
