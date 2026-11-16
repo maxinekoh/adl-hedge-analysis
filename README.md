@@ -28,7 +28,7 @@ Change the inputs in the first code cell and run all cells.
 
 ## Where the numbers come from
 
-The starting position comes from Maxine Koh Xin Yi’s *The Price of Solvency: When the Exchange Survives, but the Hedge Doesn't* (Blockchain @ NTU, October 2026). The $1,000 limit and the price shocks are hypothetical. The model assumes the new short fills immediately at the ADL price, with one execution charge proportional to size. It treats spot and perpetual price moves as equal and leaves out funding, basis, and ADL settlement effects. The calculation starts after ADL and covers the next price move.
+The starting position comes from my article *The Price of Solvency: When the Exchange Survives, but the Hedge Doesn't* (Blockchain @ NTU, October 2026). The $1,000 limit and the price shocks are hypothetical. The model assumes the new short fills immediately at the ADL price, with one execution charge proportional to size. It treats spot and perpetual price moves as equal and leaves out funding, basis, and ADL settlement effects. The calculation starts after ADL and covers the next price move.
 
 ## Further reading
 
